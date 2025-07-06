@@ -1,0 +1,716 @@
+:root {
+  --color-grey-dark: hsl(0, 0%, 20%);
+  --color-off-white: hsl(0, 0%, 95%);
+  --color-grey-dark-green: hsl(120, 20%, 20%);
+  --color-grey-light-green: hsl(120, 20%, 85%);
+  --color-green-primary: hsl(120, 89%, 36%);
+  --color-magenta-accent: hsl(330, 89%, 20%);
+  --gradient-green: linear-gradient(to right bottom, hsl(120, 89%, 40%), hsl(120, 89%, 30%), hsl(120, 89%, 20%));
+}
+
+*, *::after, *::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* weights: 200 - 1000 */
+  font-family: "Nunito Sans", sans-serif;
+  color: var(--color-magenta-accent);
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  overflow-x: hidden;
+  background-color: var(--color-grey-light-green);
+  /*NOTE  about explicitly specifying rows & sizes for the landmark features also, make sure to explicitly assign elements to their respective rows and columns unless they're supposed to be dynamic ro added through JS */
+  grid-template-rows: auto 1fr;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* SHARED STYLES */
+.button-primary {
+  background: var(--gradient-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+  height: fit-content;
+  transition: filter 100ms;
+
+  &:is(:hover) {
+        filter: brightness(.8);
+      }
+}
+
+.svg-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+/* HEADER */
+header {
+  grid-column: 1 / -1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: fit-content;
+  padding-inline: 50px;
+  padding-block: 25px;
+    
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    h2 {
+      font-family: "Courgette", cursive;
+      font-weight: bold;
+      font-style: normal;
+      font-size: 40px;
+      user-select: none;
+    }
+    
+    .svg-icon {
+      background: var(--gradient-green);
+      width: 90px;
+      height: 90px;
+      border-radius: 100%;
+      
+      svg {
+        width: 45%;
+        height: auto;
+        fill: white;
+      }
+    }
+  }
+  
+  .searchfield {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    --searchfield-border-radius: 100rem;
+    border-radius: var(--searchfield-border-radius);
+    
+    input {
+      border: none;
+      font-size: 1rem;
+      margin-inline-start: 2rem;
+      color: var(--color-magenta-accent);
+
+      &:focus {
+        outline: none;
+      }
+    }
+    
+    button {
+      padding-inline: 2rem;
+      padding-block: 1rem;
+      border-radius: var(--searchfield-border-radius);
+      font-size: 1.25rem;      
+      
+      .svg-icon {
+        width: 1.25rem;
+        fill: white;
+      }
+    }
+  }
+
+  /* Bookmarks and Adding Recipe */
+  .add-bookmark-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    anchor-name: --anchorBookmarks;
+
+    .button-header-secondary {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: 1.25rem;
+      color: var(--color-magenta-accent);
+      transition: text-shadow 100ms;
+  
+      &:is(:hover, :focus) {
+        text-shadow: 0 0 1px var(--color-magenta-accent);
+      }
+  
+      .svg-icon {
+        fill: var(--color-magenta-accent);
+        width: 1.5rem;
+      }
+    }    
+  }
+
+  .bookmarks-container {
+    position-anchor: --anchorBookmarks;
+    position: absolute;
+    top: calc(anchor(bottom) + 20px);
+    right: anchor(right);
+    
+    display: grid;
+    background-color: white;
+    /*opacity has to be included in the original declaration and the @starting-style */
+    visibility: hidden;
+    opacity: 0;
+    transition: all 200ms ease-out allow-discrete;
+
+    grid-template-columns: 30rem;
+    grid-auto-flow: row;
+    grid-auto-rows: 6rem;
+    row-gap: 1rem;
+    overflow: hidden;
+    padding: 20px;
+    
+    list-style: none;
+    border-radius: 15px;
+
+    .bookmarked-item {
+      display: grid;
+      grid-column: 1;
+      grid-template-columns: 1fr 2fr;
+      column-gap: 1rem;
+      overflow: hidden;
+      border-radius: 15px;
+      transition: transform 200ms;
+      background-color: var(--color-grey-light-green);
+
+      &:hover {        
+        transform: scale(1.01);
+        cursor: pointer;
+      }
+  
+      img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+        object-fit: cover;
+      }
+
+      h3 {
+        display: block;
+        margin-block: auto;
+        font-size: 1.125rem;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        }
+
+    }
+
+    .bookmarks-placeholder {
+      display: flex;
+      font-size: 1.25rem;
+      justify-content: center;  
+      align-items: center;
+      color: hsla(from var(--color-magenta-accent) h s l / .8);
+    }
+  }
+  
+  .button-bookmarks:hover + .bookmarks-container {
+    visibility: visible;
+    opacity: 1;
+  }
+  .bookmarks-container:hover {
+    visibility: visible;
+    opacity: 1;
+  }
+  .bookmarks-container:has(.bookmarked-item:hover){
+    visibility: visible;
+    opacity: 1;
+  }
+  /* :is(.button-bookmarks:hover + .bookmarks-container, .bookmarks-container:hover, .bookmarks-container:has(.bookmarked-item:hover)) {
+    visibility: visible;
+    opacity: 1;    
+  }  */
+
+  @starting-style {
+    .bookmarks-container {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+}
+
+
+/* MAIN CONTENT */
+main {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+/* SEARCH RESULTS */
+.search-results-container {
+  grid-column: 1;
+  border-radius: 15px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .search-results {
+    list-style: none;
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 7rem;
+    /* align-items: center; */ /*this prevents images shrinking and makes them not conform to row size - don't add properties unless they're clearly needed I guess*/
+    row-gap: 1.5rem;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  
+    .search-result {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      column-gap: 1.5rem;
+      height: 100%;
+      overflow: hidden; /*That was also necessary to clip the image to the rows' height*/
+      background-color: var(--color-grey-light-green);
+      border-radius: 15px;
+      transition: transform 200ms;
+
+      &:hover {        
+        transform: scale(1.01);
+        cursor: pointer;
+      }
+  
+      img {
+        overflow: hidden; /*This was CRUCIAL in making the image actually be clipped to the row height. object-fit did nothing and as a result the text was not centered vertically cause the row was actually taller than displayed!*/
+      }
+  
+      .recipe-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden; /*on clipping text with (...) this property is needed */
+        
+        h3 {
+          font-size: 1.5rem;
+          max-width: 100%; /*and these 4  it has to be max-width*/
+          overflow: hidden; /*and these 4*/
+          white-space: nowrap; /*and these 4*/
+          text-overflow: ellipsis; /*and these 4*/
+        }
+  
+        p {
+          font-size: 1.125rem;
+          max-width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  .pagination-buttons-container {
+    margin-block-start: auto;
+    display: flex;
+    width: 80%;
+
+    button {
+      padding-inline: 2rem;
+      padding-block: 1rem;
+      border-radius: 100rem;
+      font-size: 1.25rem;      
+      
+      .svg-icon {
+        width: 1.25rem;
+        fill: white;
+      }
+    }
+
+    #button-pagination-left {
+      margin-inline: 0 auto;
+    }
+    #button-pagination-right {
+      margin-inline: auto 0;
+    }
+  }
+
+  footer {
+    margin-block-start: 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* RECIPE DISPLAY */
+.recipe-container {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: 20px 1fr 20px;
+  grid-template-rows: repeat(4, auto);
+  justify-items: center;
+  row-gap: 2.25rem;
+
+  .recipe-image-container {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+
+    /* Setting an explicit height to make images or other content conform to the parents' dimensions*/
+    height: 30vh;
+    anchor-name: --recipe-image-anchor;
+
+    img {
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+      height: 100%;
+    }
+
+    figcaption {
+      position: absolute;
+      position-anchor: --recipe-image-anchor;
+      justify-self: anchor-center;
+      bottom: anchor(bottom);
+      font-size: 3rem;
+      font-weight: 700;
+      background: var(--gradient-green);
+      color: white;
+      /* width: fit-content; */
+      /* max-width: 20ch; */
+      transform: skewY(-5deg);
+      /* text-align: center;  */
+    }
+  }
+
+  .recipe-settings {
+    margin-block-start: 1rem;
+    grid-row: 2;
+    grid-column: 2;
+    display:flex;
+    gap: 4rem;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    height: fit-content;
+
+    .recipe-setting {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: 1.25rem;
+      color: var(--color-magenta-accent);
+      gap: 1rem;
+  
+      .svg-icon {
+        fill: var(--color-magenta-accent);
+        width: 1.5rem;
+      }
+
+      .recipe-setting-name {
+        font-weight: 500;
+      }
+
+      .recipe-setting-number {
+        font-weight: 800;
+      }
+    }
+
+    .recipe-setting.servings-count-display {
+      
+      .button-servings-count {
+          border: .125rem solid var(--color-magenta-accent);
+          padding: .25rem;
+          border-radius: 100%;
+          transition: all 100ms;
+
+          &:hover {
+            background-color: var(--color-magenta-accent);
+
+            .svg-icon {
+              fill: white;
+            }
+          }
+
+        .svg-icon {
+          aspect-ratio: 1/1;
+          width: 1.25rem;
+        }
+      }
+    }
+
+    :is(.button-add-bookmark, .button-remove-bookmark) {
+      padding: .5rem;
+      border-radius: 100rem;
+      font-size: 1.5rem;      
+      
+      .svg-icon {
+        width: 1.5rem;
+        fill: white;
+      }
+    }
+
+    .button-add-bookmark .svg-icon svg {
+      &:nth-of-type(1) {
+        display: block; 
+      }
+
+      &:nth-of-type(2) {
+        display: none;
+      }
+    }
+
+    .button-add-bookmark.button-remove-bookmark .svg-icon svg {
+      &:nth-of-type(1) {
+        display: none; 
+      }
+
+      &:nth-of-type(2) {
+        display: block;
+      }
+    }
+  }
+
+  .ingredients-container {
+    grid-row: 3;
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20vh;
+
+    h2 {
+      font-size: 2.125rem;
+    }
+
+    .recipe-ingredients-list {
+      margin-block-start: 1rem;
+      height: 100%;
+      list-style: none;
+      font-size: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      column-gap: 3rem;
+      row-gap: .5rem;
+
+      .recipe-ingredient {
+        display: flex;
+
+        &::before {
+          content: "✔";
+          margin-inline-end: .75rem;
+          display: block;          
+        }
+      }
+    }
+  }
+
+  .recipe-instructions {
+    grid-column: 2;
+    grid-row: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1rem;
+    margin-block-end: 1rem;
+
+    h2 {
+      font-size: 2.125rem;
+    }
+
+    p {
+      font-size: 1.25rem;
+
+      #recipe-source {
+        font-weight: 600;
+      }
+    }
+
+    .button-instructions {
+      text-decoration: none;
+      padding-inline: 2rem;
+      padding-block: 1rem;
+      border-radius: 100rem;
+      font-size: 1.25rem; 
+
+      .svg-icon {
+        width: 1.25rem;
+        fill: white;
+      }
+    }
+  }
+}
+
+/* Add recipe modal */
+.addrecipe-modal {
+  margin: auto;
+  padding: 24px;
+  background-color: var(--color-grey-light-green);
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  border-radius: 15px;
+  opacity: 0;
+  transition: all 200ms allow-discrete;
+
+  /* NOTE: animating the ::backdrop as well */
+  &::backdrop {
+    background: none;
+    background-color: hsla(from var(--color-magenta-accent) h s l / .3);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: all 200ms allow-discrete;
+  }
+
+  &[open] {
+    opacity: 1;    
+  }
+  
+  &[open]::backdrop {
+    opacity: 1;
+  }
+}
+
+.addrecipe-modal-content {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  color: var(--color-magenta-accent);
+  align-items: center;
+  anchor-name: --addRecipeModalAnchor;
+  gap: 1.5rem;
+
+  h2 {
+    font-size: 4rem;
+    font-weight: 600;
+  }
+
+  .button-addrecipe-close {
+    position-anchor: --addRecipeModalAnchor;
+    position: absolute;
+    top: anchor(top);
+    right: anchor(right);
+    display: flex;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+  
+    .svg-icon {
+      fill: var(--color-magenta-accent);
+      width: 100%;
+      height: auto;
+      padding: 4px;
+    }
+  }
+
+  .addrecipe-form {
+    display: grid;
+    grid-template-columns: 1fr 16px 2fr 80px 1fr 1rem 2fr;
+    row-gap: .75rem;
+    align-items: center;
+
+    h3 {
+      grid-row: 1;
+      font-size: 2.5rem;
+      font-weight: 500;
+    }
+
+    label {
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+    input {
+      font-size: 1.5rem;
+      padding-block: 8px;
+      padding-inline: 24px;
+      border: none;
+      border-radius: 100rem;
+    }
+
+    h3.recipe-data {
+      grid-column: 1 / 4;
+    }
+
+    h3.recipe-data ~ label {
+      grid-column: 1;
+    }
+
+    h3.recipe-data ~ input {
+      grid-column: 3;
+    }
+
+    h3.recipe-ingredients {
+      grid-column: 5 / -1;
+    }
+    h3.recipe-ingredients ~ label {
+      grid-column: 5;
+    }
+    h3.recipe-ingredients ~ input {
+      grid-column: 7;
+    }
+
+    :is(label, input) {
+      &:nth-of-type(1) {
+        grid-row: 2;
+      }
+      &:nth-of-type(2) {
+        grid-row: 3;
+      }
+      &:nth-of-type(3) {
+        grid-row: 4;
+      }
+      &:nth-of-type(4) {
+        grid-row: 5;
+      }
+      &:nth-of-type(5) {
+        grid-row: 6;
+      }
+    }
+  }
+
+  .button-addrecipe-upload {
+    padding-inline: 2rem;
+    padding-block: 1rem;
+    font-size: 1.25rem;
+    border-radius: 100rem;
+
+    .svg-icon {
+      width: 1.5rem;
+      fill: white;
+    }
+  }
+}
+
+/* NOTE: on this when animating elements from display none: we add opacity starting style on the already displayed state! */
+@starting-style {
+  .addrecipe-modal[open] {
+    opacity: 0;
+  }
+
+  .addrecipe-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+
